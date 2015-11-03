@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html id="J-html" class="iLight">
+<head>
+    <meta charset="UTF-8" />
+    <title>
+        
+            Docker & YARN
+        
+    </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="author" content="dylike" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" media="all" href="/static/style.css" />
+    <!--[if lt IE 9]>
+    <script src="/static/js/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <script src="/static/js/jquery.js" type="text/javascript"></script>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" class="home blog lotus index">
+    <nav class="lotus-nav">
+        <ul>
+            
+            
+            
+            
+            
+            <li class="home " id="">
+                <a href="/index.html" rel="bookmark" title="首页">
+                    <i class="icon-home"></i>
+                </a>
+                
+            </li>
+            
+            
+            
+            
+            
+            <li class="" id="">
+                <a href="/archives.html" rel="bookmark" title="文章归档">
+                    <i class="icon-reorder"></i>
+                </a>
+                
+            </li>
+            
+            
+            
+            
+            
+            <li class="" id="">
+                <a href="/contact.html" rel="bookmark" title="关于我">
+                    <i class="icon-envelope-alt"></i>
+                </a>
+                
+            </li>
+            
+            
+            
+            
+            
+            <li class="" id="J-changeTheme">
+                <a href="/" rel="bookmark" title="切换模式">
+                    <i class="icon-heart"></i>
+                </a>
+                
+            </li>
+            
+            
+            
+            
+            
+            <li class="" id="">
+                <a href="https://github.com/dylike" rel="bookmark" title="GitHub">
+                    <i class="icon-github"></i>
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+
+    <p class="lotus-breadcrub">
+    <a href="/index.html" rel="nofollow" rel="nofollow" title="首页">Home</a>
+    <span> &gt; </span>
+    <a href="/archives.html" rel="nofollow" >Archives</a>
+    <span> &gt; </span>
+    Docker & YARN
+</p>
+<h1 class="lotus-pagetit">Docker & YARN</h1>
+<p class="lotus-meta">Publish: <time class="date" pubdate="September 23, 2014">September 23, 2014</time></p>
+<article  itemscope itemtype="http://schema.org/Article" class="lotus-post">
+<h3 id="section">介绍</h3>
+<ol>
+  <li>
+    <h5 id="lxclinux-containers">LXC(Linux Containers)</h5>
+    <blockquote>
+      <p>LXC is a userspace interface for the Linux kernel containment features.
+ Through a powerful API and simple tools, it lets Linux users easily create and manage system or application containers.  ——摘自LXC官网.</p>
+    </blockquote>
+
+    <ul>
+      <li><a href="https://linuxcontainers.org">LXC官网：linuxcontainers.org</a></li>
+    </ul>
+  </li>
+  <li>
+    <h5 id="docker">Docker</h5>
+    <blockquote>
+
+    </blockquote>
+    <ul>
+      <li><a href="https://www.docker.com/whatisdocker/">What is Docker?</a></li>
+    </ul>
+  </li>
+  <li>
+    <h5 id="yarnyet-another-resource-negotiatorhttpdlacmorgcitationcfmid2523633--hadoop20--"><a href="http://dl.acm.org/citation.cfm?id=2523633">YARN:Yet Another Resource Negotiator</a> ( Hadoop2.0+ 的核心 )</h5>
+    <p>如图:<br />
+ <img src="/image/2014-09-22/transform.png" alt="hadoop1.x 2 hadoop2.x" /></p>
+
+    <blockquote>
+      <p>分布式系统中主要有两个方面需要考虑</p>
+    </blockquote>
+
+    <blockquote>
+      <p><strong>1.任务的执行</strong><br />
+ <strong>2.资源的调度</strong></p>
+    </blockquote>
+
+    <blockquote>
+      <p>在<strong>Hadoop1</strong>中，很不幸这两个模块都放在了Hadoop的同一节点上. 必定会存在单点障碍，而且可以想象得到效率肯定会低下.<br />
+  在<strong>Hadoop2</strong>中，这两个模块得到了解耦，运行在上层的任务，可以是不同的计算框架（MR,…）在底层，将资源的调度管理放在了YARN上.(实际上还是会存在单点故障，不过可以想象会好很多.)</p>
+    </blockquote>
+
+    <blockquote>
+      <p>结论：<strong>YARN是Hadoop2中的资源调度管理器</strong></p>
+    </blockquote>
+
+    <p>再来看看Hadoop2的<a href="http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html">架构图</a>：</p>
+
+    <p><img src="http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/yarn_architecture.gif" alt="" /></p>
+
+    <p>图中出现了一个叫<strong>Container</strong>的东西，这是我们需要关注的核心：</p>
+
+    <blockquote>
+      <p>对比LXC
+ - 区别: <strong>Container是YARN中资源的抽象，它封装了某个节点上一定量的资源（CPU和内存两类资源）。</strong> 它跟Linux Container没有任何关系，仅仅是YARN提出的一个概念（从实现上看，可看做一个可序列化/反序列化的<strong>Java类</strong>).<br />
+ 这里是一个详细介绍的博客地址:<br />
+ <a href="http://dongxicheng.org/mapreduce-nextgen/understand-yarn-container-concept/">董的博客：深入理解Hadoop YARN中的Container概念.</a></p>
+    </blockquote>
+
+    <ul>
+      <li>联系: Container运行在NodeManager所在的物理机上，不同作业的Contanier需要不同的运行环境，在YARN中封装了一个类（<em>ContainerLauncherContext</em>）用以加载Container所需的各种环境.</li>
+    </ul>
+
+    <p>也就是说他们的功能是类似的.</p>
+  </li>
+</ol>
+
+<h3 id="docker--yarn">Docker &amp; YARN</h3>
+
+<p>So. Docker &amp; YARN 到底是怎么一回事？<br />
+<img src="http://www.kdnuggets.com/wp-content/uploads/Container-Virtualization.png" alt="" /></p>
+
+<p>此图非常好的解释了Docker &amp; YARN能做什么！</p>
+
+   		在YARN之上，可以运行非常多不同的作业！之前，YARN中每个作业会分到一个AM，
+<pre><code>AM请求Container，Container运行在NodeManager上，同一个NodeManager之上可能运行着
+不用作业的Container，这些Container之间首先是需要资源隔离，而且他们运行所需的环境也
+是不同的，之前的实现，YARN使用自己的Container，需要在NodeManager中装配好所有
+Container需要运行的环境.
+
+	有了Docker.对于每个不同的作业，可以把他所需运行的环境都打包到一个Docker 
+Container上（entire Linux file system incl. custom versions of perl,
+ python etc.）并且以此为蓝图来配置所有YARN中的Container.
+</code></pre>
+
+<p>随着Docker的火热发展，Docker项目也得到了Apache Hadoop社区的关注.并且目前YARN已经开始了将Docker集成到YARN中的计划.</p>
+
+<p><a href="https://wiki.apache.org/hadoop/dineshs/IsolatingYarnAppsInDockerContainers">Isolating YARN Applications in Docker Containers</a></p>
+
+<p>在这个wiki页面中，介绍了使用Docker的动机:</p>
+
+<blockquote>
+  <ol>
+    <li>安全性.</li>
+    <li>性能隔离.</li>
+    <li>对于不同类型的任务（I/O，CPU，…）更高的利用率.</li>
+    <li>一致性.</li>
+    <li>软件的依赖和配置模块可以独立出来.</li>
+    <li>application的坏境是可再生的、且是可以通过编程来定义的</li>
+    <li>快速部署.</li>
+  </ol>
+</blockquote>
+
+<h2 id="section-1">总结</h2>
+
+<p>其实Docker &amp; YARN 要做的就是这样一件事情.</p>
+
+</article>
+<p class="lotus-anno">声明: 本文采用 <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" rel="nofollow" target="_blank" title="自由转载-非商用-非衍生-保持署名">BY-NC-SA(自由转载-非商用-非衍生-保持署名)</a> 授权。转载请注明转自: <a href="" title="" rel="nofollow">dylike</a></p>
+<section class="lotus-nextpage fn-clear">
+    
+    <div class="lotus-nextpage-left"><a class="prev" href="/2014/01/04/ilotus.html" rel="prev">&laquo;&nbsp;【Jekyll】iLotus主题</a></div>
+    
+    
+    <div class="lotus-nextpage-right"><a class="next" href="/docker/2014/10/11/docker.html" rel="next">Docker&nbsp;&raquo;</a></div>
+    
+</section>
+
+<!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="/hadoop/2014/09/23/docker-yarn.html" data-title="Docker & YARN" data-url="/hadoop/2014/09/23/docker-yarn.html"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"dylike"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+<footer class="lotus-footer" style="text-align:center;">
+	<p>Copyright © 2014-2015 <b>dylike的小站</b> All rights reserved. Theme by <a href="http://www.zhanxin.info" target="_blank">zhanxin</a>.</p>
+</footer>
+<script src="/static/js/jquery.scrollTo.js" type="text/javascript"></script>
+<script src="/static/js/iLotus.js" type="text/javascript"></script>
+    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan style='display:none' id='cnzz_stat_icon_1256703495'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256703495' type='text/javascript'%3E%3C/script%3E"));</script>
+</body>
+</html>
